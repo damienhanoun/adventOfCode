@@ -7,7 +7,7 @@ namespace AdventOfCode
     {
         public static string GetTextInput(int day)
         {
-            var request = (HttpWebRequest)WebRequest.Create($"http://adventofcode.com/day/{day}/input");
+            var request = (HttpWebRequest)WebRequest.Create($"http://adventofcode.com/2018/day/{day}/input");
             request.Proxy.Credentials = CredentialCache.DefaultCredentials;
             request.CookieContainer = new CookieContainer();
             request.CookieContainer.Add(new Cookie("session", "", "/", "adventofcode.com"));
