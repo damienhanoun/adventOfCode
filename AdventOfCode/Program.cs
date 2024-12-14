@@ -10,7 +10,7 @@ var dayTypes = Assembly.GetExecutingAssembly()
     .Where(t => t is { IsClass: true, IsAbstract: false } && t.IsSubclassOf(typeof(Day)))
     .OrderBy(t => t.Name);
 
-foreach (var dayType in dayTypes)
+foreach (var dayType in dayTypes.OrderBy(t => int.Parse(t.Name.Substring(3))))
     if (Activator.CreateInstance(dayType) is Day dayInstance)
     {
         var dayNumber = int.Parse(dayType.Name.Substring(3)); // Extract number from class name (e.g., "Day1" -> 1)
