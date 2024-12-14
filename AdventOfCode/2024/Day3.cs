@@ -10,8 +10,8 @@ public class Day3 : Day
         var doRegex = new Regex(@"\bdo\(\)");
         var dontRegex = new Regex(@"\bdon't\(\)");
 
-        Answer($"Part 1 - Total Sum of All Multiplications: {CalculateTotalMultiplications(input, mulRegex)}");
-        Answer($"Part 2 - Total Sum of Enabled Multiplications: {CalculateConditionalMultiplications(input, mulRegex, doRegex, dontRegex)}");
+        Answer($"Total Sum of All Multiplications: {CalculateTotalMultiplications(input, mulRegex)}");
+        Answer($"Total Sum of Enabled Multiplications: {CalculateConditionalMultiplications(input, mulRegex, doRegex, dontRegex)}");
     }
 
     private static int CalculateTotalMultiplications(string input, Regex mulRegex)
