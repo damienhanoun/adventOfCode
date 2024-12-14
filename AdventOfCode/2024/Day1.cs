@@ -4,24 +4,9 @@ public class Day1 : Day
 {
     protected override void Solve(string input)
     {
-        // Parse input into two lists
-        var pairs = input
-            .Split('\n', StringSplitOptions.RemoveEmptyEntries)
-            .Select(line =>
-            {
-                var parts = line.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-                if (parts.Length != 2 || !int.TryParse(parts[0], out var left) || !int.TryParse(parts[1], out var right))
-                {
-                    Console.WriteLine($"Skipping invalid line: {line}");
-                    return null;
-                }
+        var pairs = ParseInput(input);
 
-                return new[] { left, right };
-            })
-            .Where(pair => pair != null)
-            .ToArray();
-
-        if (pairs.Length == 0)
+        if (!pairs.Any())
         {
             Console.WriteLine("No valid input pairs to process.");
             return;
@@ -30,25 +15,48 @@ public class Day1 : Day
         var leftList = pairs.Select(pair => pair[0]).ToList();
         var rightList = pairs.Select(pair => pair[1]).ToList();
 
-        // Part 1: Calculate total distance with sorted lists
+        Answer($"Total Distance: {CalculateTotalDistance(leftList, rightList)}");
+        Answer($"Similarity Score: {CalculateSimilarityScore(leftList, rightList)}");
+    }
+
+    private static List<int[]> ParseInput(string input)
+    {
+        return input
+            .Split('\n', StringSplitOptions.RemoveEmptyEntries)
+            .Select(ParseLine)
+            .Where(pair => pair != null)
+            .ToList()!;
+    }
+
+    private static int[]? ParseLine(string line)
+    {
+        var parts = line.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        if (parts.Length != 2 || !int.TryParse(parts[0], out var left) || !int.TryParse(parts[1], out var right))
+        {
+            Console.WriteLine($"Skipping invalid line: {line}");
+            return null;
+        }
+
+        return new[] { left, right };
+    }
+
+    private static int CalculateTotalDistance(List<int> leftList, List<int> rightList)
+    {
         leftList.Sort();
         rightList.Sort();
-        var totalDistance = leftList
+
+        return leftList
             .Select((value, index) => Math.Abs(value - rightList[index]))
             .Sum();
-        Answer($"Total Distance: {totalDistance}");
+    }
 
-        // Part 2: Minimize total distance
-
-        // Create a dictionary to count occurrences of each number in the right list
+    private static int CalculateSimilarityScore(List<int> leftList, List<int> rightList)
+    {
         var rightCountMap = rightList.GroupBy(x => x)
             .ToDictionary(group => group.Key, group => group.Count());
 
-        // Calculate similarity score
-        var similarityScore = leftList
-            .Select(leftValue => leftValue * (rightCountMap.ContainsKey(leftValue) ? rightCountMap[leftValue] : 0))
+        return leftList
+            .Select(leftValue => leftValue * rightCountMap.GetValueOrDefault(leftValue, 0))
             .Sum();
-
-        Answer($"Similarity Score: {similarityScore}");
     }
 }
