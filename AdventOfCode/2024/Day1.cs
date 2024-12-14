@@ -6,12 +6,6 @@ public class Day1 : Day
     {
         var pairs = ParseInput(input);
 
-        if (!pairs.Any())
-        {
-            Console.WriteLine("No valid input pairs to process.");
-            return;
-        }
-
         var leftList = pairs.Select(pair => pair[0]).ToList();
         var rightList = pairs.Select(pair => pair[1]).ToList();
 
