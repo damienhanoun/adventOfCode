@@ -6,11 +6,11 @@ public class Day11 : Day
     {
         var initialStones = ParseInput(input);
 
-        const int Part1Blinks = 25;
-        const int Part2Blinks = 75;
+        const int part1Blinks = 25;
+        const int part2Blinks = 75;
 
-        Answer(SimulateBlinks(initialStones, Part1Blinks).ToString());
-        Answer(SimulateBlinks(initialStones, Part2Blinks).ToString());
+        Answer(SimulateBlinks(initialStones, part1Blinks).ToString());
+        Answer(SimulateBlinks(initialStones, part2Blinks).ToString());
     }
 
     private static List<long> ParseInput(string input)
