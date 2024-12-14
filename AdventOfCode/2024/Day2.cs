@@ -14,11 +14,11 @@ public class Day2 : Day
 
         // Part 1: Count directly safe reports
         var safeReportCountPart1 = reports.Count(IsSafeReport);
-        Answer($"Part 1 - Safe Reports: {safeReportCountPart1}");
+        Answer($"Safe Reports: {safeReportCountPart1}");
 
         // Part 2: Count safe reports with the Problem Dampener
         var safeReportCountPart2 = reports.Count(report => IsSafeWithDampener(report));
-        Answer($"Part 2 - Safe Reports: {safeReportCountPart2}");
+        Answer($"Safe Reports: {safeReportCountPart2}");
     }
 
     /// <summary>
