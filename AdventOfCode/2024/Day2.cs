@@ -4,48 +4,71 @@ public class Day2 : Day
 {
     protected override void Solve(string input)
     {
-        // Split the input into reports (lines)
-        var reports = input.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+        // Parse the input into a list of reports (each report is a list of integers)
+        var reports = input
+            .Split('\n', StringSplitOptions.RemoveEmptyEntries)
+            .Select(line => line.Split(' ', StringSplitOptions.RemoveEmptyEntries)
+                .Select(int.Parse)
+                .ToList())
+            .ToList();
 
-        var safeCount = 0;
+        // Part 1: Count directly safe reports
+        var safeReportCountPart1 = reports.Count(IsSafeReport);
+        Answer($"Part 1 - Safe Reports: {safeReportCountPart1}");
 
-        // Iterate over each report
-        foreach (var report in reports)
+        // Part 2: Count safe reports with the Problem Dampener
+        var safeReportCountPart2 = reports.Count(report => IsSafeWithDampener(report));
+        Answer($"Part 2 - Safe Reports: {safeReportCountPart2}");
+    }
+
+    /// <summary>
+    ///     Determines whether a given report is safe.
+    /// </summary>
+    private bool IsSafeReport(List<int> report)
+    {
+        if (report.Count < 2) return false; // A report must have at least two levels
+
+        // Determine the direction (increasing or decreasing)
+        var isIncreasing = report[1] > report[0];
+        var isDecreasing = report[1] < report[0];
+
+        // Iterate through the report to check all conditions
+        for (var i = 1; i < report.Count; i++)
         {
-            // Parse the numbers in the report
-            var levels = report.Split(' ').Select(int.Parse).ToArray();
+            var diff = report[i] - report[i - 1];
 
-            var isIncreasing = true;
-            var isDecreasing = true;
-            var isSafe = true;
+            // Check the difference condition
+            if (Math.Abs(diff) < 1 || Math.Abs(diff) > 3)
+                return false;
 
-            // Check each pair of adjacent levels
-            for (var i = 1; i < levels.Length; i++)
-            {
-                var difference = levels[i] - levels[i - 1];
-
-                if (difference < 1 || difference > 3)
-                {
-                    isSafe = false; // Break the valid difference rule
-                    break;
-                }
-
-                if (difference > 0) isDecreasing = false; // If increasing, cannot be decreasing
-                if (difference < 0) isIncreasing = false; // If decreasing, cannot be increasing
-            }
-
-            // A report is safe if it's either fully increasing or fully decreasing, and follows all rules
-            if (isSafe && (isIncreasing || isDecreasing)) safeCount++;
+            // Ensure consistency in direction
+            if (isIncreasing && diff <= 0) return false;
+            if (isDecreasing && diff >= 0) return false;
         }
 
-        // Provide the result as the answer
-        Answer(safeCount.ToString());
+        // If we made it here, the report is safe
+        return true;
+    }
+
+    /// <summary>
+    ///     Determines whether a report is safe with the Problem Dampener.
+    /// </summary>
+    private bool IsSafeWithDampener(List<int> report)
+    {
+        // If the report is already safe, return true
+        if (IsSafeReport(report)) return true;
+
+        // Try removing each level and check if the modified report is safe
+        for (var i = 0; i < report.Count; i++)
+        {
+            var modifiedReport = new List<int>(report);
+            modifiedReport.RemoveAt(i);
+
+            if (IsSafeReport(modifiedReport))
+                return true;
+        }
+
+        // If no single removal makes it safe, return false
+        return false;
     }
 }
-
-// input example
-// 22 25 27 28 30 31 32 29
-// 72 74 75 77 80 81 81
-// 52 53 55 58 59 63
-// 14 17 19 22 27
-// 65 68 67 68 71 73 76 77

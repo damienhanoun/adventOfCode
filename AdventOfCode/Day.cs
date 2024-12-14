@@ -30,7 +30,7 @@ public abstract class Day
         Solve(inputData);
 
         // Output all answers
-        for (var i = 0; i < _answers.Count; i++) Console.WriteLine($"Year {year} Day {day} Part {i + 1} Answer: {_answers[i]}");
+        for (var i = 0; i < _answers.Count; i++) Console.WriteLine($"Day {day} - Part {i + 1} : {_answers[i]}");
     }
 
     protected abstract void Solve(string input);
