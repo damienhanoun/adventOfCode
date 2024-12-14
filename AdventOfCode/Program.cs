@@ -1,21 +1,18 @@
-﻿using StructureMap;
-using System;
-using System.Linq;
+﻿using System.Reflection;
+using AdventOfCode;
 
-namespace AdventOfCode
-{
-    class Program
+// From cookie session after being authenticated on https://adventofcode.com/
+Day.SetSessionToken("your session token here");
+
+var year = 2024;
+var dayTypes = Assembly.GetExecutingAssembly()
+    .GetTypes()
+    .Where(t => t is { IsClass: true, IsAbstract: false } && t.IsSubclassOf(typeof(Day)))
+    .OrderBy(t => t.Name);
+
+foreach (var dayType in dayTypes)
+    if (Activator.CreateInstance(dayType) is Day dayInstance)
     {
-        static void Main(string[] args)
-        {
-            var containers = new Container(c => c.Scan(scanner =>
-            {
-                scanner.AssemblyContainingType<Day>();
-                scanner.AddAllTypesOf<Day>().NameBy(x => x.Name);
-            }));
-            foreach (var day in containers.GetAllInstances<Day>().Reverse())
-                day.GiveAnswer();
-            Console.Read();
-        }
+        var dayNumber = int.Parse(dayType.Name.Substring(3)); // Extract number from class name (e.g., "Day1" -> 1)
+        await dayInstance.ExecuteAsync(year, dayNumber);
     }
-}

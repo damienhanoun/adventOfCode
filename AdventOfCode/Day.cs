@@ -1,34 +1,64 @@
-﻿using System;
-using System.Collections.Generic;
+﻿namespace AdventOfCode;
 
-namespace AdventOfCode
+public abstract class Day
 {
-    public abstract class Day
+    private const string AdventOfCodeBaseUrl = "https://adventofcode.com";
+    private static string _sessionToken;
+
+    // List to store answers for multiple parts
+    private readonly List<string> _answers = new();
+
+    public static void SetSessionToken(string sessionToken)
     {
-        private readonly int _dayNumber;
-        private readonly string _textInput;
+        if (sessionToken == "your session token here")
+            throw new ArgumentException("In Program.cs, set session token", nameof(sessionToken));
+        _sessionToken = sessionToken ?? throw new ArgumentNullException(nameof(sessionToken));
+    }
 
-        public Day()
-        {
-            var lengthOfAbstractClassName = this.GetType().BaseType.Name.Length;
-            var numberAtTheEndOfTheClassName = this.GetType().Name.Remove(startIndex: 0, count: lengthOfAbstractClassName);
-            _dayNumber = int.Parse(numberAtTheEndOfTheClassName);
-            _textInput = UrlCaller.GetTextInput(_dayNumber).TrimEnd('\n');
-        }
+    public async Task ExecuteAsync(int year, int day)
+    {
+        if (year < 2015)
+            throw new ArgumentOutOfRangeException(nameof(year), "Year must be 2015 or later.");
+        if (day is < 1 or > 31)
+            throw new ArgumentOutOfRangeException(nameof(day), "Day must be between 1 and 31.");
 
-        private List<object> _answerParts = new List<object>();
-        public void GiveAnswer()
-        {
-            CalculAnswers(_textInput);
-            for (int i = 0; i < _answerParts.Count; i++)
-                Console.WriteLine($"Day {_dayNumber} part {i + 1} answer is : {_answerParts[i].ToString()}");
-        }
+        var inputData = await FetchDataAsync(year, day);
 
-        public abstract void CalculAnswers(string textInput);
+        // Clear any previous answers (in case the same instance is reused)
+        _answers.Clear();
 
-        protected void AnswerIs(object answer)
-        {
-            _answerParts.Add(answer);
-        }
+        Solve(inputData);
+
+        // Output all answers
+        for (var i = 0; i < _answers.Count; i++) Console.WriteLine($"Year {year} Day {day} Part {i + 1} Answer: {_answers[i]}");
+    }
+
+    protected abstract void Solve(string input);
+
+    /// <summary>
+    ///     Adds an answer for a specific part of the problem.
+    /// </summary>
+    /// <param name="answer">The answer to add.</param>
+    protected void Answer(string answer)
+    {
+        if (string.IsNullOrWhiteSpace(answer))
+            throw new ArgumentException("Answer cannot be null or whitespace.", nameof(answer));
+
+        _answers.Add(answer);
+    }
+
+    private async Task<string> FetchDataAsync(int year, int day)
+    {
+        if (string.IsNullOrWhiteSpace(_sessionToken))
+            throw new InvalidOperationException("Session token is not set.");
+
+        var url = $"{AdventOfCodeBaseUrl}/{year}/day/{day}/input";
+        using var client = new HttpClient();
+        client.DefaultRequestHeaders.Add("Cookie", $"session={_sessionToken}");
+
+        var response = await client.GetAsync(url);
+        response.EnsureSuccessStatusCode();
+
+        return await response.Content.ReadAsStringAsync();
     }
 }

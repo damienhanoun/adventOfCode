@@ -1,0 +1,68 @@
+
+# Build Folders (bin/obj)
+bin/
+obj/
+
+# Rider IDE files
+.idea/
+*.sln.iml
+
+# User-specific files
+*.user
+*.suo
+*.userosscache
+*.userprefs
+
+# Crash reports
+*.stackdump
+
+# Visual Studio working files
+.vs/
+.vscode/
+
+# DotNet artifacts
+*.log
+*.nuget/
+*.cache/
+*.pdb
+
+# Build results
+*.dll
+*.exe
+*.app
+*.so
+*.dylib
+
+# Temporary files
+*.tmp
+*.temp
+*.db
+
+# Backup files
+*.bak
+
+# OS generated files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Test Results
+TestResult.xml
+TestResults/
+*.trx
+*.coverage
+*.coverlet
+
+# Entity Framework Migrations
+_migrations/
+
+# Publish output
+.publish/
+
+# Local Secrets
+secrets.json
+.env
+
+# JetBrains Rider settings
+.idea/
+*.DotSettings.user
